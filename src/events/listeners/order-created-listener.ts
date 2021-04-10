@@ -8,6 +8,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
   queueGroupName = queueGroupName;
 
   async onMessage(data: OrderCreatedEvent["data"], msg: Message) {
+    // Create a new job to expire this order after the elapsed period of time
     await expirationQueue.add({
       orderId: data.id,
     });

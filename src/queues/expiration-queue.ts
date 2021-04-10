@@ -5,7 +5,7 @@ interface Payload {
   orderId: string;
 }
 
-// order:expiration is the channel in redis where we want to save this job
+// order:expiration is the channel in redis where we want to save this new job
 const expirationQueue = new Queue<Payload>("order:expiration", {
   redis: {
     host: process.env.REDIS_HOST,
