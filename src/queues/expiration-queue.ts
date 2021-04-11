@@ -1,4 +1,6 @@
 import Queue from "bull";
+import { ExpirationCompletePublisher } from "../events/publishers/expiration-complete-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 // An interface describing the data that will be stored in this job
 interface Payload {
@@ -14,10 +16,9 @@ const expirationQueue = new Queue<Payload>("order:expiration", {
 
 // Process the job when redis server returns it after elapsed time (15 minutes in this case)
 expirationQueue.process(async (job) => {
-  console.log(
-    "I want to publish an expiration:complete event for orderId",
-    job.data.orderId
-  );
+  new ExpirationCompletePublisher(natsWrapper.client).publish({
+    orderId: job.data.orderId, // Data property contains all information we store in the job
+  });
 });
 
 export { expirationQueue };
